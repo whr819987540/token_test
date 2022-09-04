@@ -1,0 +1,10 @@
+# db
+docker run -itd --name token_test_db -p 3306:3306 -v /root/token_test:/root/token_test whr819987540/mysql5.7:1.0 /bin/bash
+docker exec token_test_db service mysql start
+# 数据库导出
+mysqldump -uroot -p123456 token_test > token_test_db.sql
+# 手动加上创建数据库、使用数据库的sql语句
+# 用bash执行后面的命令（bash的参数）
+# root@whr:~/token_test# bash -c "ls"
+# config.txt  db  main.py  templates  token_test.sql
+docker exec token_test_db bash -c "mysql -uroot -p123456 < /root/token_test/token_test.sql"
