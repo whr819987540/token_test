@@ -3,16 +3,21 @@ from random import sample
 from hashlib import md5
 import sys
 import pymysql
+from test.func import *
+
+config = load_config()
+db_config = config['db']
 
 
 class DB():
     def __init__(self):
         try:
             self.connect = pymysql.connect(
-                host="127.0.0.1",
-                user="root",
-                passwd="123456",
-                db="token_test"
+                host=db_config['host'],
+                user=db_config['user'],
+                passwd=db_config['password'],
+                db=db_config['db'],
+                port=db_config['port']
             )
         except Exception as e:
             print(e)
@@ -36,15 +41,15 @@ class DB():
             res = dict_cursor.fetchone()
             print(res)
             if res is None:
-                flag,err_msg = False,"username not exits"
+                flag, err_msg = False, "username not exits"
             elif res['password_md5'] == get_md5(password+res['salt']):
-                flag,err_msg = True, None
+                flag, err_msg = True, None
             else:
-                flag,err_msg = False,"wrong password"
+                flag, err_msg = False, "wrong password"
 
-            return flag,err_msg
+            return flag, err_msg
 
-    def register(self, username:str, name:str, password:str) -> bool:
+    def register(self, username: str, name: str, password: str) -> bool:
         """
             根据用户名/姓名/密码生成一个账户
             返回是否成功
@@ -87,11 +92,10 @@ class DB():
             cursor.execute(sql)
             res = cursor.fetchone()
             if res is None:
-                flag,err_msg = False, "login error"
+                flag, err_msg = False, "login error"
             else:
-                flag,err_msg = True, res[0]
-        return flag,err_msg
-
+                flag, err_msg = True, res[0]
+        return flag, err_msg
 
     def __del__(self):
         try:
@@ -133,5 +137,5 @@ if __name__ == "__main__":
     # print(res)
 
     name = db.name_select("wh")
-    
-    print(db.login("wh","hello"))
+
+    print(db.login("wh", "hello"))
